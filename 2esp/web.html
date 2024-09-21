@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PARKING LOT STATUS</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            width: 400px;
+            /* Increased width */
+            padding: 20px;
+            border: 5px solid;
+            border-image: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet) 1;
+            background-color: yellow;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #333;
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .status {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #222;
+        }
+
+        #available {
+            font-weight: bold;
+            color: red;
+        }
+
+        #occupied {
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>PARKING LOT STATUS</h1>
+        <div class="status">Occupied Slots: <span id="available">4</span></div>
+        <div class="status">Available Slots: <span id="occupied">0</span></div>
+
+        <script>
+            // Connect to WebSocket server
+            const webSocket = new WebSocket('ws://192.168.189.99:81');
+
+            webSocket.onopen = function () {
+                console.log('Connected to WebSocket server');
+            };
+
+            webSocket.onmessage = function (event) {
+                // Parse the message as occupied and available slots
+                const [available, occupied] = event.data.split(',').map(Number);
+
+                // Update the HTML elements with new values
+                document.getElementById('available').textContent = available;
+                document.getElementById('occupied').textContent = occupied;
+            };
+
+            webSocket.onerror = function (error) {
+                console.error('WebSocket Error:', error);
+            };
+
+            webSocket.onclose = function () {
+                console.log('WebSocket connection closed');
+            };
+        </script>
+</body>
+
+</html>
